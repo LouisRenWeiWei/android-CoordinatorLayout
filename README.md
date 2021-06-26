@@ -1,4 +1,184 @@
 # android-CoordinatorLayout
+1.前言
+CoordinatorLayout是在Google I/O 15上，谷歌发布了一个新的 support library中的控件，它是support library中最重要的控件之一，所以大家要掌握它！
+Coordinator在英文中是“协调者”的意思，所以我把CoordinatorLayout叫做“协调者布局“。
+
+2 本章内容
+本章主要讲解如下内容：
+
+ 1. 基本使用
+    1.1 CoordinatorLayout+FloatingActionButton
+    1.2 CoordinatorLayout+AppBarLayout
+        1.2.1 AppBarLayout嵌套TabLayout
+        1.2.2 AppBarLayout嵌套CollapsingToolbarLayout
+        1.2.3 AppBarLayout与FloatingActionButton
+ 2.自定义Behavior
+     2.1自定义Behavior
+     2.2滚动监听
+————————————————
+CoordinatorLayout+FloatingActionButton
+
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_floatingaction"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/faBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="10dp"
+        />
+</android.support.design.widget.CoordinatorLayout>
+————————————————
+CoordinatorLayout+AppBarLayout
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:title="ToolBar" />
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="30dp"
+                android:text="测试数据1"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="30dp"
+                android:text="测试数据2"
+                android:textSize="20sp" />
+
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>
+————————————————
+
+
+我们在CoordinatorLayout加入了AppBarLayout，AppBarLayout中有一个toolbar，这里我们对AppBarLayou做一下讲解：
+
+1.AppbarLayout：继承了LinearLayout(默认的AppBarLayout是垂直方向)，它是为了Material Design设计的App Bar，它的作用是把AppBarLayout包裹的内容都作为AppBar。说白了它的出现就是为了和CoordinatorLayout搭配使用，实现一些炫酷的效果的。没有CoordinatorLayout，它和Linearlayout没区别。
+
+2.app:layout_scrollFlags=”scroll|enterAlways”
+AppBarLayout的直接子控件可以设置的属性:layout_scrollFlags
+
+scroll|exitUntilCollapsed 如果AppBarLayout的直接子控件设置该属性,该子控件可以滚动,向上滚动NestedScrollView出父布局(一般为CoordinatorLayout)时,会折叠到顶端,向下滚动时NestedScrollView必须滚动到最上面的时候才能拉出该布局
+scroll|enterAlways:只要向下滚动该布局就会显示出来,只要向上滑动该布局就会向上收缩
+scroll|enterAlwaysCollapsed:向下滚动NestedScrollView到最底端时该布局才会显示出来
+如果不设置改属性,则改布局不能滑动
+3.细心的朋友可能在NestedScrollView中发现这么一条属性,这是干什么用的呢？
+
+app:layout_behavior="@string/appbar_scrolling_view_behavior"
+1
+@string/appbar_scrolling_view_behavior是一个系统字符串，值为：android.support.design.widget.AppBarLayout$ScrollingViewBehavior。
+唯一的作用是把自己（使用者）放到AppBarLayout的下面。（不能理解为什么叫ScrollingViewBehavior）所有View都能使用这个Behavior。大家可以把这句话去掉再试试效果。
+
+为了节省篇幅，NestedScrollView中的TextView我删除了很多，大家测试的时候，拷贝上几个。
+
+注意：要注意扩展，我们可以在AppBarLayout包含Toolbar和TableLayout.然后只给 Toolbar设置app:layout_scrollFlags=”scroll|enterAlways”属性，TableLayout不设置。这个大家自己试试效果吧，这里就不给代码了
+————————————————
+AppBarLayout+CollapsingToolbarLayout
+接着3.2讲解的内容，我们继续往下深入。我们在AppBarLayout中添加CollapsingToolbarLayout。
+
+Collapsing是折叠的意思。见名知意，CollapsingToolbarLayout的作用是提供了一个可以折叠的Toolbar，它继承至FrameLayout
+————————————————
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="mystudy.czh.com.mystudy.CollapsingToolBarActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.NoActionBar.AppBarOverlay">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            app:contentScrim="@color/colorAccent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:title="@string/app_name">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/toolbar_bg" />
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay"
+                app:title="toolBar" />
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@color/colorAccent" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>
+————————————————
+1.大家一定要弄清楚，它们之间的包含关系：
+AppBarLayout >CollapsingToolbarLayout>Toolbar
+2.CollapsingToolbarLayout作为AppBarLayout的直接子控件，也要设置app:layout_scrollFlags属性
+3.app:layout_collapseMode属性是折叠模式，它是CollapsingToolbarLayout的直接子控件需要设置的,它的取值如下：
+
+pin:在滑动过程中,此自布局会固定在它所在的位置不动,直到CollapsingToolbarLayout全部折叠或者全部展开
+parallax:视察效果,在滑动过程中,不管上滑还是下滑都会有视察效果,不知道什么事视察效果自己看gif图(layout_collapseParallaxMultiplier视差因子 0~1之间取值,当设置了parallax时可以配合这个属性使用,调节自己想要的视差效果)
+不设置:跟随NestedScrollView的滑动一起滑动,NestedScrollView滑动多少距离他就会跟着走多少距离
+上面这几个属性大家如果看不懂，自己设置一下看看就明白了。
+————————————————
+
+
+
 最后说一下使用注意事项:
 CoordinatorLayout继承自viewgroup,但是使用类似于framLayout,有层次结构,后面的布局会覆盖在前面的布局之上,但跟behavior属性也有很大关系,的app:layout_behavior属性,只有CoordinatorLayout的直接子布局才能响应,所以不要做徒劳无功的事
 
