@@ -178,6 +178,34 @@ parallax:视察效果,在滑动过程中,不管上滑还是下滑都会有视察
 ————————————————
 
 
+CoordinatorLayout 提供了两个属性用来设置 FAB 的位置：
+
+layout_anchor：设置 FAB 的锚点，我们熟悉的 PopupWindow 也有类似概念。
+layout_anchorGravity：设置相对锚点的位置，如bottom|right表示 FAB 位于锚点的右下角
+ <?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/contentView"
+    android:orientation="vertical" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/anchorView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/anchorView"
+        app:layout_anchorGravity="bottom|right"
+        android:onClick="onClick"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"/>
+</android.support.design.widget.CoordinatorLayout>
+
 
 最后说一下使用注意事项:
 CoordinatorLayout继承自viewgroup,但是使用类似于framLayout,有层次结构,后面的布局会覆盖在前面的布局之上,但跟behavior属性也有很大关系,的app:layout_behavior属性,只有CoordinatorLayout的直接子布局才能响应,所以不要做徒劳无功的事
@@ -192,18 +220,13 @@ AppBarLayout的直接子控件可以设置的属性:layout_scrollFlags ：
 2.scroll|enterAlways:只要向下滚动该布局就会显示出来,只要向上滑动该布局就会向上收缩 
 3.scroll|enterAlwaysCollapsed:向下滚动NestedScrollView到最底端时该布局才会显示出来 
 4.如果不设置改属性,则改布局不能滑动
-1
-2
-3
-4
+
 CollapsingToolbarLayout,字面意思是折叠的toolbar,它确实是起到折叠作用的,可以把自己的自布局折叠 继承自framLayout,所以它的直接子类可以设置layout_gravity来控制显示的位置,它的直接子布局可以使用的属性:app:layout_collapseMode(折叠模式):可取的值如下:
 
 1.pin:在滑动过程中,此自布局会固定在它所在的位置不动,直到CollapsingToolbarLayout全部折叠或者全部展开 
 2.parallax:视察效果,在滑动过程中,不管上滑还是下滑都会有视察效果,不知道什么事视察效果自己看gif图(layout_collapseParallaxMultiplier视差因子 0~1之间取值,当设置了parallax时可以配合这个属性使用,调节自己想要的视差效果) 
 3.不设置:跟随NestedScrollView的滑动一起滑动,NestedScrollView滑动多少距离他就会跟着走多少距离
-1
-2
-3
+
 toobar最好是放在CollapsingToolbarLayout,也不是没有其他用法,但是在这套系统中一般只能放在CollapsingToolbarLayout里面,才能达到好的效果,这里toolbar同时设置layout_gravity和app:layout_collapseMode时有一些比较复杂的情况.不一一作介绍,因为一般我们只会把toolbar放在最上面(不用设置layout_gravity属性,默认的),并且设置app:layout_collapseMode为pin,让他固定在最顶端,有兴趣的自己试试其他情况,
 
 告你一个惊天大幂幂:只要CollapsingToolbarLayout里面包含有toolbar那么CollapsingToolbarLayout的折叠后高度就是toolbar的高度,相当于CollapsingToolbarLayout设置了minHeight属性,
@@ -218,12 +241,7 @@ expandedTitleMargin当title文字展开时文字的margin,当然还有marginTop�
 app:collapsedTitleTextAppearance=”@style/Text”折叠时title的样式里面可以定义字体大小颜色等 
 app:collapsedTitleTextAppearance=”@style/Text1”折叠时title的样式里面可以定义字体大小颜色等 
 当然还有一些,自己试试吧,现在的这些已经完全够用了
-1
-2
-3
-4
-5
-6
+ 
 还有最后一个问题:怎么实现固定表头,这个也简单,写一个布局放在CollapsingToolbarLayout之后,AppBarLayout之内即可,xml文件中自己找找看吧.你要是问如果放在CollapsingToolbarLayout之前,AppBarLayout之内会怎么样?这样折叠布局就不起作用了.不会折叠了
 
 
@@ -231,7 +249,7 @@ viewpager 下的recycleview不要设置android:nestedScrollingEnabled="false" �
 
 
 
-eg:
+eg:  
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
